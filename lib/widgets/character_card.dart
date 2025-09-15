@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:rick_and_morty/models/character.dart';
 
 class CharacterCard extends StatelessWidget {
-  const CharacterCard({super.key});
+  final Character character;
+
+  const CharacterCard({super.key, required this.character});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +22,7 @@ class CharacterCard extends StatelessWidget {
                   topRight: Radius.circular(16),
                 ),
                 child: Image.network(
-                  'https://rickandmortyapi.com/api/character/avatar/462.jpeg',
+                  character.image,
                   width: double.infinity,
                   height: 300,
                   fit: BoxFit.fitWidth,
@@ -67,7 +70,7 @@ class CharacterCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Sheik Rick',
+                  character.name,
                   style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
@@ -79,7 +82,7 @@ class CharacterCard extends StatelessWidget {
                     const Icon(Icons.circle, size: 12, color: Colors.green),
                     const SizedBox(width: 6),
                     Text(
-                      'Alive - Humanoid',
+                      '${character.status} - ${character.species}',
                       style: const TextStyle(fontSize: 16),
                     ),
                   ],
@@ -91,7 +94,7 @@ class CharacterCard extends StatelessWidget {
                     color: Theme.of(context).colorScheme.outline,
                   ),
                 ),
-                Text('Male', style: TextStyle(fontSize: 16)),
+                Text(character.gender, style: TextStyle(fontSize: 16)),
                 const SizedBox(height: 10),
                 Text(
                   'Location:',
@@ -99,10 +102,7 @@ class CharacterCard extends StatelessWidget {
                     color: Theme.of(context).colorScheme.outline,
                   ),
                 ),
-                Text(
-                  'Earth (Replacement Dimension)',
-                  style: TextStyle(fontSize: 16),
-                ),
+                Text(character.locationName, style: TextStyle(fontSize: 16)),
               ],
             ),
           ),
