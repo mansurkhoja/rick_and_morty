@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rick_and_morty/models/character.dart';
-import 'package:rick_and_morty/repositories/character/character_repository.dart';
+import 'package:provider/provider.dart';
+import 'package:rick_and_morty/providers/characters_provider.dart';
 import 'package:rick_and_morty/widgets/character_card.dart';
 
 class CharactersScreen extends StatefulWidget {
@@ -11,28 +11,18 @@ class CharactersScreen extends StatefulWidget {
 }
 
 class _CharactersScreenState extends State<CharactersScreen> {
-  List<Character> _characters = [];
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _fetchCharacters();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: _characters.length,
-      itemBuilder: (context, index) =>
-          CharacterCard(character: _characters[index]),
+    return Consumer<CharactersProvider>(
+      builder: (context, provider, _) {
+        return ListView.builder(
+          itemCount: provider.characters.length,
+          itemBuilder: (context, index) {
+            final character = provider.characters[index];
+            return CharacterCard(character: character);
+          },
+        );
+      },
     );
-  }
-
-  Future<void> _fetchCharacters() async {
-    final fetched = await CharacterRepository().fetchCharacters();
-    setState(() {
-      _characters = fetched;
-    });
   }
 }
