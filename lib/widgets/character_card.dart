@@ -3,8 +3,15 @@ import 'package:rick_and_morty/models/character.dart';
 
 class CharacterCard extends StatelessWidget {
   final Character character;
+  final VoidCallback onPressFavorite;
+  final bool isFavorite;
 
-  const CharacterCard({super.key, required this.character});
+  const CharacterCard({
+    super.key,
+    required this.character,
+    required this.onPressFavorite,
+    required this.isFavorite,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -55,10 +62,11 @@ class CharacterCard extends StatelessWidget {
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
-                    icon: Icon(Icons.star_border, size: 32),
-                    onPressed: () {
-                      debugPrint('bang');
-                    },
+                    icon: Icon(
+                      isFavorite ? Icons.star : Icons.star_border,
+                      size: 32,
+                    ),
+                    onPressed: onPressFavorite,
                   ),
                 ),
               ),
