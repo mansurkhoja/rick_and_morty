@@ -65,6 +65,7 @@ class CharacterCard extends StatelessWidget {
                     icon: Icon(
                       isFavorite ? Icons.star : Icons.star_border,
                       size: 32,
+                      color: Colors.amber,
                     ),
                     onPressed: onPressFavorite,
                   ),
