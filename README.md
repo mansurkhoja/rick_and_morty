@@ -1,16 +1,18 @@
-# rick_and_morty
+# Rick and Morty Flutter App
 
-A new Flutter project.
+This repository contains a simple Flutter app that loads characters from the **Rick & Morty API**, supports favorites, local caching (Hive), and pagination.
 
-## Getting Started
+> I added two demo videos showing the app running on Android and iPhone. Place them under `assets/videos/` as:
+>
+> * `assets/videos/android_demo.mp4`
+> * `assets/videos/iphone_demo.mp4`
 
-This project is a starting point for a Flutter application.
+---
 
-A few resources to get you started if this is your first Flutter project:
+## Features
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+* Load characters from [https://rickandmortyapi.com](https://rickandmortyapi.com)
+* Infinite scroll pagination
+* Favorites (persisted with Hive)
+* Local page-by-page cache (Hive)
+* Basic offline support (show cached pages)
