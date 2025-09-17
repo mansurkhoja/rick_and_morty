@@ -17,7 +17,6 @@ class CharactersScreen extends StatelessWidget {
               if (metrics.pixels >= metrics.maxScrollExtent - 2000 &&
                   !provider.isLoading) {
                 provider.fetchNextPage();
-                debugPrint('Fetching next page...');
               }
             }
             return false;
