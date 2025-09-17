@@ -17,7 +17,7 @@ class CharactersScreen extends StatelessWidget {
             return CharacterCard(
               character: character,
               isFavorite: provider.isFavorite(character.id),
-              onPressFavorite: () => {provider.toggleFavorite(character)},
+              onPressFavorite: () => provider.toggleFavorite(character),
             );
           },
         );
