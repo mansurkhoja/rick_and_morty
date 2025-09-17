@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:rick_and_morty/models/character.dart';
 
@@ -28,29 +29,13 @@ class CharacterCard extends StatelessWidget {
                   topLeft: Radius.circular(16),
                   topRight: Radius.circular(16),
                 ),
-                child: Image.network(
-                  character.image,
+                child: CachedNetworkImage(
+                  imageUrl: character.image,
                   width: double.infinity,
                   height: 300,
                   fit: BoxFit.fitWidth,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Container(
-                      height: 300,
-                      color: Colors.grey[300],
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                              : null,
-                        ),
-                      ),
-                    );
-                  },
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(height: 300, color: Colors.grey[300]);
-                  },
+                  errorWidget: (context, url, error) =>
+                      Container(height: 300, color: Colors.red[300]),
                 ),
               ),
               Positioned(
