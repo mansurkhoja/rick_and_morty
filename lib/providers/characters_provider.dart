@@ -17,7 +17,12 @@ class CharactersProvider extends ChangeNotifier {
     if (cacheBox.isNotEmpty) {
       final pages =
           cacheBox.keys.where((k) => k.toString().startsWith('page_')).toList()
-            ..sort();
+            ..sort((a, b) {
+              int extractNumber(String s) => int.parse(s.split('_')[1]);
+              return extractNumber(a).compareTo(extractNumber(b));
+            });
+      _page = int.parse(pages.last.split('_').last) + 1;
+
       for (var key in pages) {
         final raw = cacheBox.get(key);
         final list = (jsonDecode(raw) as List).cast<Map<String, dynamic>>();
