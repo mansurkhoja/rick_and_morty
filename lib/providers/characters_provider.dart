@@ -62,10 +62,14 @@ class CharactersProvider extends ChangeNotifier {
   }
 
   List<Character> get favorites {
-    return favBox.keys.map((k) {
+    final characters = favBox.keys.map((k) {
       final raw = favBox.get(k);
       final map = jsonDecode(raw);
       return Character.fromJson(map);
     }).toList();
+
+    characters.sort((a, b) => a.name.compareTo(b.name));
+
+    return characters;
   }
 }
