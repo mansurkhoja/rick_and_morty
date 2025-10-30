@@ -1,33 +1,27 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:rick_and_morty/models/character.dart';
 import 'package:rick_and_morty/repositories/character/character_repository.dart';
+import 'package:rick_and_morty/repositories/character/local_storage.dart';
 
+/// Provider now receives its external dependencies via constructor injection:
+/// - [repository] handles network requests
+/// - [localStorage] handles caching and favorites (Hive)
 class CharactersProvider extends ChangeNotifier {
+  final CharacterRepository repository;
+  final LocalStorage localStorage;
+
+  CharactersProvider({required this.repository, required this.localStorage});
+
   final List<Character> characters = [];
   int _page = 1;
   bool isLoading = false;
   bool hasMore = true;
-  final Box favBox = Hive.box('favorites');
-  final Box cacheBox = Hive.box('cache');
 
   void init() async {
-    if (cacheBox.isNotEmpty) {
-      final pages =
-          cacheBox.keys.where((k) => k.toString().startsWith('page_')).toList()
-            ..sort((a, b) {
-              int extractNumber(String s) => int.parse(s.split('_')[1]);
-              return extractNumber(a).compareTo(extractNumber(b));
-            });
-      _page = int.parse(pages.last.split('_').last) + 1;
-
-      for (var key in pages) {
-        final raw = cacheBox.get(key);
-        final list = (jsonDecode(raw) as List).cast<Map<String, dynamic>>();
-        characters.addAll(list.map((e) => Character.fromJson(e)));
-      }
+    if (localStorage.hasCache) {
+      characters.addAll(localStorage.loadAllCachedCharacters());
+      final last = localStorage.lastCachedPage();
+      _page = last + 1;
       notifyListeners();
     }
     fetchNextPage();
@@ -38,13 +32,11 @@ class CharactersProvider extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
     try {
-      final newItems = await CharacterRepository().fetchCharacters(page: _page);
+      final newItems = await repository.fetchCharacters(page: _page);
       if (newItems.isEmpty) hasMore = false;
       characters.addAll(newItems);
-      cacheBox.put(
-        'page_$_page',
-        jsonEncode(newItems.map((e) => e.toJson()).toList()),
-      );
+      // persist cache via localStorage
+      localStorage.cachePage(_page, newItems);
       _page++;
     } catch (e) {
       debugPrint('Error fetching characters: $e');
@@ -54,27 +46,12 @@ class CharactersProvider extends ChangeNotifier {
     }
   }
 
-  bool isFavorite(int id) => favBox.containsKey(id.toString());
+  bool isFavorite(int id) => localStorage.isFavorite(id);
 
   void toggleFavorite(Character c) {
-    final key = c.id.toString();
-    if (favBox.containsKey(key)) {
-      favBox.delete(key);
-    } else {
-      favBox.put(key, jsonEncode(c.toJson()));
-    }
+    localStorage.toggleFavorite(c);
     notifyListeners();
   }
 
-  List<Character> get favorites {
-    final characters = favBox.keys.map((k) {
-      final raw = favBox.get(k);
-      final map = jsonDecode(raw);
-      return Character.fromJson(map);
-    }).toList();
-
-    characters.sort((a, b) => a.name.compareTo(b.name));
-
-    return characters;
-  }
+  List<Character> get favorites => localStorage.getFavorites();
 }
