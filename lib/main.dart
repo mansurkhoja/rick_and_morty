@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:rick_and_morty/providers/characters_provider.dart';
+import 'package:rick_and_morty/repositories/character/character_repository.dart';
+import 'package:rick_and_morty/repositories/character/local_storage.dart';
 import 'package:rick_and_morty/screens/root_screen.dart';
 
 void main() async {
@@ -17,8 +19,13 @@ class RickAndMortyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final repository = CharacterRepository();
+    final localStorage = LocalStorage();
+
     return ChangeNotifierProvider(
-      create: (_) => CharactersProvider()..init(),
+      create: (_) =>
+          CharactersProvider(repository: repository, localStorage: localStorage)
+            ..init(),
       child: Consumer<CharactersProvider>(
         builder: (context, provider, _) {
           return MaterialApp(
